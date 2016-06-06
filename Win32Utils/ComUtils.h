@@ -3,9 +3,10 @@
 #include <combaseapi.h>
 
 #define IUNKNOWN_METHODS \
-	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, _COM_Outptr_ void __RPC_FAR *__RPC_FAR *);	\
-	ULONG STDMETHODCALLTYPE AddRef(void);														\
-	ULONG STDMETHODCALLTYPE Release(void)
+	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, _COM_Outptr_ void __RPC_FAR *__RPC_FAR * ppvObject)	\
+				{ return CUnknownImpl::QueryInterface(riid, ppvObject); }										\
+	ULONG STDMETHODCALLTYPE AddRef(void) { return CUnknownImpl::AddRef(); }										\
+	ULONG STDMETHODCALLTYPE Release(void) { return CUnknownImpl::Release(); }
 
 class CUnknownImpl : public IUnknown {
 public:
@@ -21,7 +22,7 @@ public:
 	virtual ULONG STDMETHODCALLTYPE Release(void);
 
 protected:
-	ULONG m_refCount;
+	LONG m_refCount;
 };
 
 #define HR_ASSERT(exp, hr) { HRESULT _hr = (exp) ? S_OK : hr; if(FAILED(_hr)) return hrCheck(_hr, _T(#exp)); }

@@ -8,12 +8,12 @@ HRESULT CUnknownImpl::QueryInterface(REFIID riid, void ** ppvObject)
 
 ULONG CUnknownImpl::AddRef(void)
 {
-	return InterlockedIncrement((LONG*)&m_refCount);
+	return InterlockedIncrement(&m_refCount);
 }
 
 ULONG CUnknownImpl::Release(void)
 {
-	LONG refCount = InterlockedDecrement((LONG*)&m_refCount);
+	LONG refCount = InterlockedDecrement(&m_refCount);
 	if (refCount == 0) delete this;
 	return refCount;
 }
@@ -24,13 +24,4 @@ HRESULT hrCheck(HRESULT exp, LPCTSTR expStr)
 
 	}
 	return exp;
-}
-
-HRESULT t(void* p)
-{
-	HR_ASSERT_OK(E_ABORT);
-	HR_ASSERT(p != NULL, E_POINTER);
-
-	HRESULT hr = HR_EXPECT(false, E_INVALIDARG);
-	return HR_EXPECT_OK(E_POINTER);
 }
