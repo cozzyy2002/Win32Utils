@@ -13,6 +13,7 @@
 
 
 // TODO: プログラムに必要な追加ヘッダーをここで参照してください
-#pragma
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
+
+#include <Windows.h>
