@@ -1,6 +1,7 @@
 #pragma once
 
 #include <combaseapi.h>
+#include <Shlwapi.h>
 
 #define IUNKNOWN_METHODS \
 	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, _COM_Outptr_ void __RPC_FAR *__RPC_FAR * ppvObject)	\
@@ -13,15 +14,16 @@ public:
 	CUnknownImpl() : m_refCount(0) {}
 	virtual ~CUnknownImpl() {}
 
-	virtual HRESULT STDMETHODCALLTYPE QueryInterface(
+	STDMETHODIMP QueryInterface(
 		/* [in] */ REFIID riid,
 		/* [iid_is][out] */ _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject);
 
-	virtual ULONG STDMETHODCALLTYPE AddRef(void);
+	STDMETHODIMP_(ULONG) AddRef(void);
 
-	virtual ULONG STDMETHODCALLTYPE Release(void);
+	STDMETHODIMP_(ULONG) Release(void);
 
 protected:
+	virtual const QITAB* getQITAB() const { return NULL; }
 	LONG m_refCount;
 };
 

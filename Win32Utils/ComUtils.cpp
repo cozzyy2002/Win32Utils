@@ -1,9 +1,13 @@
 #include "stdafx.h"
 #include "ComUtils.h"
 
+#pragma comment(lib, "Shlwapi.lib")
+
 HRESULT CUnknownImpl::QueryInterface(REFIID riid, void ** ppvObject)
 {
-	return E_NOTIMPL;
+	static const QITAB qitab[] = { {0} };
+	const QITAB* pqitab = getQITAB();
+	return QISearch(this, pqitab ? pqitab : qitab, riid, ppvObject);
 }
 
 ULONG CUnknownImpl::AddRef(void)
