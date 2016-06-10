@@ -13,10 +13,8 @@ public:
 
 class Testee : public CUnknownImpl, public IPersist {
 public:
-	Testee(bool checkCtor, bool checkDtor, bool iPersist)
-		: checkCtor(checkCtor), checkDtor(checkDtor), iPersist(iPersist) {
-		if (checkCtor) classChecker.ctor();
-	}
+	Testee(bool checkDtor, bool iPersist)
+		: checkDtor(checkDtor), iPersist(iPersist) {}
 	~Testee() { if (checkDtor) classChecker.dtor(); }
 
 	IUNKNOWN_METHODS;
@@ -29,7 +27,7 @@ public:
 
 	using CUnknownImpl::m_refCount;
 	ClassChecker classChecker;
-	const bool checkCtor, checkDtor, iPersist;
+	const bool checkDtor, iPersist;
 };
 
 const QITAB Testee::qitab[] = {
@@ -39,7 +37,7 @@ const QITAB Testee::qitab[] = {
 
 TEST(CUnknownImplTest, AddRef_Release)
 {
-	Testee* testee = new Testee(false, true, false);
+	Testee* testee = new Testee(true, false);
 
 	EXPECT_CALL(testee->classChecker, dtor()).Times(1);
 
@@ -51,7 +49,7 @@ TEST(CUnknownImplTest, AddRef_Release)
 
 TEST(CUnknownImplTest, CComPtr)
 {
-	Testee* testee = new Testee(false, true, false);
+	Testee* testee = new Testee(true, false);
 
 	EXPECT_CALL(testee->classChecker, dtor()).Times(1);
 
@@ -64,7 +62,7 @@ TEST(CUnknownImplTest, CComPtr)
 
 TEST(CUnknownImplTest, IUnknown_QueryInterface)
 {
-	Testee* testee = new Testee(false, false, false);
+	Testee* testee = new Testee(false, false);
 
 	IUnknown* unk = NULL;
 
@@ -80,7 +78,7 @@ TEST(CUnknownImplTest, IUnknown_QueryInterface)
 
 TEST(CUnknownImplTest, IPersist_QueryInterface)
 {
-	Testee* testee = new Testee(false, false, true);
+	Testee* testee = new Testee(false, true);
 
 	IUnknown* unk = NULL;
 
