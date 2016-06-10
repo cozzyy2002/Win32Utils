@@ -5,29 +5,53 @@ using namespace testing;
 
 class EnumTest : public Test {
 public:
+	ENUM(Color, RED, GREEN, BLUE);
+	ENUM(WeekDay, SUN, MON, TUE, WED, THU, FRI, SAT);
 };
 
-ENUM(Colors, RED, GREEN, BLUE);
 
-ENUM(WeekDays, SUN, MON, TUE, WED, THU, FRI, SAT);
-
-TEST_F(EnumTest, Colors)
+TEST_F(EnumTest, Color_toString)
 {
-	const Colors colors;
-
-	EXPECT_EQ(0, Colors::RED);
-	EXPECT_EQ(0, colors.RED);
-
-	Colors::Values c = Colors::BLUE;
-	EXPECT_STREQ(_T("BLUE"), colors.toString(c));
+	EXPECT_EQ(0, Color::Values::RED);
+	EXPECT_EQ(1, Color::Values::GREEN);
+	EXPECT_EQ(2, Color::Values::BLUE);
+	EXPECT_STREQ(_T("RED"), ((Color)Color::RED).toString());
+	EXPECT_STREQ(_T("GREEN"), ((Color)Color::GREEN).toString());
+	EXPECT_STREQ(_T("BLUE"), ((Color)Color::BLUE).toString());
+	EXPECT_STREQ(_T("UNKNOWN"), ((Color)Color::COUNT).toString());
+	EXPECT_STREQ(_T("UNKNOWN"), ((Color)Color::INVALID).toString());
+	EXPECT_STREQ(_T("UNKNOWN"), ((Color)(Color::Values)5).toString());
 }
 
-TEST_F(EnumTest, WeekDays)
+TEST_F(EnumTest, Color_methods)
 {
-	const WeekDays d1;
-	const WeekDays d2;
+	Color color;
 
-	EXPECT_EQ(7, WeekDays::COUNT);
-	EXPECT_EQ(d1.COUNT, d2.COUNT);
-	EXPECT_STREQ(d1.toString(WeekDays::FRI), d2.toString(WeekDays::FRI));
+	EXPECT_FALSE(color.isValid())			<< "Default constructor";
+	color = Color(Color::Values::BLUE);
+	EXPECT_TRUE(color.isValid())			<< "Valid value";
+	color = Color::Values::INVALID;
+	EXPECT_FALSE(color.isValid())			<< "Invalid value";
+
+	Color::Values v = Color::GREEN;
+	color = v;
+	EXPECT_TRUE(color == v)					<< "operator=() member method";
+	EXPECT_TRUE(color != Color::RED)		<< "operator=() member method(not equal)";
+	EXPECT_TRUE(v == color)					<< "operator=() function";
+	EXPECT_TRUE(Color::RED != color)		<< "operator=() member method(not equal)";
+}
+
+TEST_F(EnumTest, WeekDay_multiInstance)
+{
+	const WeekDay d1(WeekDay::Values::FRI);
+	const WeekDay d2;
+
+	EXPECT_EQ(7, WeekDay::COUNT)			<< "Count of enum";
+	EXPECT_EQ(7, d1.COUNT)					<< "Count of instance 1";
+	EXPECT_EQ(7, d2.COUNT)					<< "Count of instance 2";
+	EXPECT_STREQ(d1.toString(), d2.toString(WeekDay::Values::FRI))	<<"instance and static toString()";
+
+	WeekDay d3(d1);
+	EXPECT_EQ(WeekDay::Values::FRI, d3);
+	EXPECT_STREQ("FRI", d3.toString());
 }
