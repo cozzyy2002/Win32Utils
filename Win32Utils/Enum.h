@@ -13,9 +13,9 @@ typedef std::string tstring;
 	class T : public CEnum<T> {		\
 	public:							\
 		typedef enum {				\
-					__VA_ARGS__,	/* Values specified in parameters of ENUM() macro	*/ \
-					COUNT,			/* Values count which can be used as literal number	*/ \
-					INVALID = -1	/* Invalid value which is not equal to other value	*/ \
+					__VA_ARGS__,	/* Values specified in parameters of ENUM() macro	*/	\
+					COUNT,			/* Values count which can be used as literal number	*/	\
+					INVALID = -1	/* Invalid value which is not equal to other value	*/	\
 		} Values;					\
 	\
 		T(Values value = INVALID) : CEnum(value) { CEnum_init(m_names, _T(#__VA_ARGS__)); }	\
