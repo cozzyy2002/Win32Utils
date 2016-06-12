@@ -5,28 +5,23 @@
 
 using namespace testing;
 
-class ClassChecker {
-public:
-	MOCK_METHOD0(ctor, void());
-	MOCK_METHOD0(dtor, void());
-};
-
 class Testee : public CUnknownImpl, public IPersist {
 public:
-	Testee(bool checkDtor, bool iPersist)
+	Testee(bool checkDtor, bool iPersist = false)
 		: checkDtor(checkDtor), iPersist(iPersist) {}
-	~Testee() { if (checkDtor) classChecker.dtor(); }
+	~Testee() { if (checkDtor) dtor(m_refCount); }
 
 	IUNKNOWN_METHODS;
 
 	virtual HRESULT STDMETHODCALLTYPE GetClassID(
 		/* [out] */ __RPC__out CLSID *pClassID) { return S_OK; }
 
+	MOCK_METHOD1(dtor, void(UINT));
+
 	static const QITAB qitab[];
 	virtual const QITAB* getQITAB() const { return iPersist ? qitab : NULL; }
 
 	using CUnknownImpl::m_refCount;
-	ClassChecker classChecker;
 	const bool checkDtor, iPersist;
 };
 
@@ -37,9 +32,9 @@ const QITAB Testee::qitab[] = {
 
 TEST(CUnknownImplTest, AddRef_Release)
 {
-	Testee* testee = new Testee(true, false);
+	Testee* testee = new Testee(true);
 
-	EXPECT_CALL(testee->classChecker, dtor()).Times(1);
+	EXPECT_CALL(*testee, dtor(0)).Times(1);
 
 	EXPECT_EQ(1, testee->AddRef());
 	EXPECT_EQ(2, testee->AddRef());
@@ -49,9 +44,9 @@ TEST(CUnknownImplTest, AddRef_Release)
 
 TEST(CUnknownImplTest, CComPtr)
 {
-	Testee* testee = new Testee(true, false);
+	Testee* testee = new Testee(true);
 
-	EXPECT_CALL(testee->classChecker, dtor()).Times(1);
+	EXPECT_CALL(*testee, dtor(0)).Times(1);
 
 	{
 		CComPtr<IPersist> p(testee);
