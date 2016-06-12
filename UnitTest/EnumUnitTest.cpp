@@ -33,12 +33,16 @@ TEST_F(EnumTest, Color_methods)
 	color = Color::Values::INVALID;
 	EXPECT_FALSE(color.isValid())			<< "Invalid value";
 
+	// Conpare object with Values type
 	Color::Values v = Color::GREEN;
 	color = v;
-	EXPECT_TRUE(color == v)					<< "operator=() member method";
-	EXPECT_TRUE(color != Color::RED)		<< "operator=() member method(not equal)";
-	EXPECT_TRUE(v == color)					<< "operator=() function";
-	EXPECT_TRUE(Color::RED != color)		<< "operator=() member method(not equal)";
+	EXPECT_TRUE(color == v);
+	EXPECT_TRUE(color != Color::RED);
+	EXPECT_TRUE(v == color);
+	EXPECT_TRUE(Color::RED != color);
+
+	// Compare Objects
+	EXPECT_TRUE(color == Color(color));
 }
 
 TEST_F(EnumTest, WeekDay_multiInstance)
@@ -52,6 +56,6 @@ TEST_F(EnumTest, WeekDay_multiInstance)
 	EXPECT_STREQ(d1.toString(), d2.toString(WeekDay::Values::FRI))	<<"instance and static toString()";
 
 	WeekDay d3(d1);
-	EXPECT_EQ(WeekDay::Values::FRI, d3);
-	EXPECT_STREQ("FRI", d3.toString());
+	EXPECT_EQ(WeekDay::Values::FRI, d3)		<< "Instance created by copy constructor";
+	EXPECT_STREQ("FRI", d3.toString())		 << "Instance created by copy constructor";
 }
