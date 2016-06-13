@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ComUtils.h"
+#include <stdio.h>
 
 #pragma comment(lib, "Shlwapi.lib")
 
@@ -25,7 +26,7 @@ ULONG CUnknownImpl::Release(void)
 HRESULT hrCheck(HRESULT exp, LPCTSTR expStr)
 {
 	if (FAILED(exp)) {
-
+		_fprintf_p(stderr, _T("%s faild: 0x%08lx\n"), expStr, exp);
 	}
 	return exp;
 }

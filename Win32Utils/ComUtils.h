@@ -27,9 +27,9 @@ protected:
 	LONG m_refCount;
 };
 
-#define HR_ASSERT(exp, hr) { HRESULT _hr = (exp) ? S_OK : hr; if(FAILED(_hr)) return hrCheck(_hr, _T(#exp)); }
-#define HR_ASSERT_OK(exp) { HRESULT _hr = exp; if(FAILED(_hr)) return hrCheck(_hr, _T(#exp)); }
-#define HR_EXPECT(exp, hr) hrCheck((exp) ? S_OK : hr, _T(#exp));
-#define HR_EXPECT_OK(exp) hrCheck(exp, _T(#exp));
+#define HR_ASSERT(exp, hr) do { HRESULT _hr = (exp) ? S_OK : hr; if(FAILED(_hr)) return hrCheck(_hr, _T(#exp)); } while(0)
+#define HR_ASSERT_OK(exp) do { HRESULT _hr = exp; if(FAILED(_hr)) return hrCheck(_hr, _T(#exp)); } while(0)
+#define HR_EXPECT(exp, hr) hrCheck((exp) ? S_OK : hr, _T(#exp))
+#define HR_EXPECT_OK(exp) hrCheck(exp, _T(#exp))
 
 HRESULT hrCheck(HRESULT expre, LPCTSTR exprStr);
