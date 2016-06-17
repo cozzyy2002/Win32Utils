@@ -4,19 +4,19 @@
 
 #pragma comment(lib, "Shlwapi.lib")
 
-HRESULT CUnknownImpl::QueryInterface(REFIID riid, void ** ppvObject)
+HRESULT CUnknownImpl::QueryInterfaceImpl(REFIID riid, void ** ppvObject)
 {
 	static const QITAB qitab[] = { {0} };
 	const QITAB* pqitab = getQITAB();
 	return QISearch(this, pqitab ? pqitab : qitab, riid, ppvObject);
 }
 
-ULONG CUnknownImpl::AddRef(void)
+ULONG CUnknownImpl::AddRefImpl(void)
 {
 	return InterlockedIncrement(&m_refCount);
 }
 
-ULONG CUnknownImpl::Release(void)
+ULONG CUnknownImpl::ReleaseImpl(void)
 {
 	LONG refCount = InterlockedDecrement(&m_refCount);
 	if (refCount == 0) delete this;

@@ -4,23 +4,24 @@
 #include <Shlwapi.h>
 
 #define IUNKNOWN_METHODS \
-	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, _COM_Outptr_ void __RPC_FAR *__RPC_FAR * ppvObject)	\
-				{ return CUnknownImpl::QueryInterface(riid, ppvObject); }										\
-	ULONG STDMETHODCALLTYPE AddRef(void) { return CUnknownImpl::AddRef(); }										\
-	ULONG STDMETHODCALLTYPE Release(void) { return CUnknownImpl::Release(); }
+	STDMETHODIMP QueryInterface(REFIID riid, _COM_Outptr_ void __RPC_FAR *__RPC_FAR * ppvObject)	\
+				{ return CUnknownImpl::QueryInterfaceImpl(riid, ppvObject); }						\
+	STDMETHODIMP_(ULONG) AddRef(void) { return CUnknownImpl::AddRefImpl(); }						\
+	STDMETHODIMP_(ULONG) Release(void) { return CUnknownImpl::ReleaseImpl(); }
 
 class CUnknownImpl : public IUnknown {
 public:
 	CUnknownImpl() : m_refCount(0) {}
 	virtual ~CUnknownImpl() {}
 
-	STDMETHODIMP QueryInterface(
+protected:
+	HRESULT QueryInterfaceImpl(
 		/* [in] */ REFIID riid,
 		/* [iid_is][out] */ _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject);
 
-	STDMETHODIMP_(ULONG) AddRef(void);
+	ULONG AddRefImpl(void);
 
-	STDMETHODIMP_(ULONG) Release(void);
+	ULONG ReleaseImpl(void);
 
 protected:
 	virtual const QITAB* getQITAB() const { return NULL; }
