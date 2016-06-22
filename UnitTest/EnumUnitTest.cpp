@@ -9,15 +9,38 @@ public:
 	ENUM(WeekDay, SUN, MON, TUE, WED, THU, FRI, SAT);
 };
 
+template<typename T>
+struct ValueTestTemplate {
+	int intValue;
+	T value;
+	LPCTSTR name;
+};
+
+ValueTestTemplate<EnumTest::Color::Values> ColorValueTestData[] = {
+	{ 0, EnumTest::Color::RED, _T("RED") },
+	{ 1, EnumTest::Color::GREEN, _T("GREEN") },
+	{ 2, EnumTest::Color::BLUE, _T("BLUE") },
+};
+
+class EnumValueTest : public TestWithParam<ValueTestTemplate<EnumTest::Color::Values>> {};
+
+INSTANTIATE_TEST_CASE_P(Colors, EnumValueTest, ValuesIn(ColorValueTestData));
+
+TEST_P(EnumValueTest, Colors)
+{
+	const ValueTestTemplate<EnumTest::Color::Values>& data = GetParam();
+
+	EnumTest::Color color(data.value);
+
+	EXPECT_EQ(data.intValue, data.value);
+	EXPECT_TRUE(EnumTest::Color::isValid(data.value));
+	EXPECT_TRUE(color.isValid());
+	EXPECT_STREQ(data.name, EnumTest::Color::toString(data.value));
+	EXPECT_STREQ(data.name, color.toString());
+}
 
 TEST_F(EnumTest, Color_toString)
 {
-	EXPECT_EQ(0, Color::Values::RED);
-	EXPECT_EQ(1, Color::Values::GREEN);
-	EXPECT_EQ(2, Color::Values::BLUE);
-	EXPECT_STREQ(_T("RED"), ((Color)Color::RED).toString());
-	EXPECT_STREQ(_T("GREEN"), ((Color)Color::GREEN).toString());
-	EXPECT_STREQ(_T("BLUE"), ((Color)Color::BLUE).toString());
 	EXPECT_STREQ(_T("UNKNOWN"), ((Color)Color::COUNT).toString());
 	EXPECT_STREQ(_T("UNKNOWN"), ((Color)Color::INVALID).toString());
 	EXPECT_STREQ(_T("UNKNOWN"), ((Color)(Color::Values)5).toString());
